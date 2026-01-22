@@ -1,0 +1,197 @@
+# 🌐 Audit d'Accessibilité Web - Extension Chrome
+
+> Extension Chrome professionnelle pour auditer l'accessibilité des sites web selon les normes WCAG 2.1
+
+[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-blue?logo=google-chrome)](https://github.com)
+[![WCAG 2.1](https://img.shields.io/badge/WCAG-2.1-green)](https://www.w3.org/WAI/WCAG21/quickref/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-yellow?logo=javascript)](https://developer.mozilla.org)
+
+![Extension Preview](https://via.placeholder.com/800x400/3b82f6/ffffff?text=Screenshot+de+l%27extension)
+
+## 📖 Description
+
+Extension Chrome permettant d'auditer l'accessibilité d'une page web en temps réel selon les normes **WCAG 2.1**. Elle analyse automatiquement la page active et génère un rapport détaillé avec des feedbacks visuels sur les éléments problématiques.
+
+### 🎯 Objectif
+
+Faciliter l'identification et la correction des problèmes d'accessibilité pour rendre le web plus inclusif pour tous, notamment les personnes en situation de handicap.
+
+## ✨ Fonctionnalités
+
+### Analyses automatiques
+
+- **🖼️ Images** : Détection des images sans attribut `alt` avec marqueurs visuels
+- **🎨 SVG Inline** : Vérification des SVG inline sans description accessible
+- **🔗 Liens** : Vérification des liens sans texte descriptif
+- **📋 Titres** : Validation de la hiérarchie des titres (H1-H6)
+- **📝 Formulaires** : Contrôle des champs sans étiquettes `<label>`
+- **🎨 Contraste** : Calcul du ratio de contraste texte/arrière-plan
+- **🏗️ Structure** : Vérification de l'attribut `lang`, landmarks ARIA et boutons
+
+### Fonctionnalités avancées
+
+✅ **Feedback visuel** - Bordures rouges animées + badges sur les images problématiques  
+✅ **Navigation rapide** - Boutons "Voir dans la page" pour scroller vers les erreurs  
+✅ **Score global** - Calcul du taux de conformité en temps réel  
+✅ **Export de rapport** - Téléchargement d'un rapport texte détaillé  
+✅ **Messages pédagogiques** - Explications de l'importance de chaque critère
+
+## 🚀 Installation
+
+### Prérequis
+
+- Google Chrome (version 88+)
+- Mode développeur activé
+
+### Étapes d'installation
+
+1. **Cloner le repository**
+
+   ```bash
+   git clone https://github.com/votre-username/accessibility-audit-extension.git
+   cd accessibility-audit-extension
+   ```
+
+2. **Ajouter les icônes** (optionnel)
+   - Rendez-vous sur [favicon.io](https://favicon.io/emoji-favicons/)
+   - Créez des icônes 16x16, 48x48 et 128x128 pixels
+   - Renommez-les en `icon16.png`, `icon48.png`, `icon128.png`
+
+3. **Charger l'extension dans Chrome**
+   - Ouvrez `chrome://extensions/`
+   - Activez le **Mode développeur**
+   - Cliquez sur **Charger l'extension non empaquetée**
+   - Sélectionnez le dossier du projet
+
+4. **Utiliser l'extension**
+   - Visitez n'importe quelle page web
+   - Cliquez sur l'icône de l'extension
+   - Consultez le rapport d'accessibilité
+
+## 📸 Captures d'écran
+
+### Interface principale
+
+![Interface](https://via.placeholder.com/600x400/f8fafc/475569?text=Interface+du+popup)
+
+### Marqueurs visuels
+
+![Marqueurs](https://via.placeholder.com/600x400/fef2f2/dc2626?text=Marqueurs+visuels+sur+images)
+
+### Rapport détaillé
+
+![Rapport](https://via.placeholder.com/600x400/ecfdf5/10b981?text=Rapport+d%27audit)
+
+## 🛠️ Technologies
+
+- **Manifest V3** - Dernière version des extensions Chrome
+- **JavaScript ES6+** - Vanilla JS, pas de frameworks
+- **Chrome Extensions API** - Permissions, Content Scripts, Messaging
+- **CSS3** - Animations, Flexbox, Grid
+- **WCAG 2.1** - Standards d'accessibilité
+
+## 📂 Structure du projet
+
+```
+accessibility-audit-extension/
+├── manifest.json          # Configuration de l'extension (Manifest V3)
+├── content.js            # Analyse du DOM et détection des problèmes
+├── popup.html            # Interface utilisateur du popup
+├── popup.js              # Logique du popup et communication
+├── popup.css             # Styles de l'interface
+├── README.md             # Documentation (vous êtes ici)
+└── README-DEV.md         # Notes de développement
+```
+
+## 💻 Utilisation
+
+### 1. Lancer un audit
+
+Cliquez sur l'icône de l'extension pour analyser automatiquement la page active.
+
+### 2. Consulter les résultats
+
+- **Score global** affiché en haut
+- **Problèmes classés** par catégorie et sévérité
+- **Compteurs** de tests réussis/échoués
+
+### 3. Navigation vers les erreurs
+
+Cliquez sur **"📍 Voir dans la page"** pour scroller automatiquement vers l'élément problématique.
+
+### 4. Exporter le rapport
+
+Cliquez sur **"📥 Exporter le rapport"** pour télécharger un fichier texte détaillé.
+
+### 5. Effacer les marqueurs
+
+Cliquez sur **"🧹 Effacer les marqueurs"** pour retirer les bordures rouges de la page.
+
+## 🎓 Ce que ce projet démontre
+
+### Compétences techniques
+
+✅ Développement d'extensions Chrome (Manifest V3)  
+✅ Manipulation avancée du DOM  
+✅ Architecture logicielle (séparation des préoccupations)  
+✅ Communication inter-composants (Message Passing)  
+✅ Calculs d'accessibilité (contraste, structure, sémantique)  
+✅ UI/UX moderne et responsive  
+✅ Gestion des événements et animations CSS
+
+### Connaissances métier
+
+✅ Normes WCAG 2.1 (A, AA, AAA)  
+✅ Accessibilité web (a11y)  
+✅ Attributs ARIA  
+✅ Standards HTML5 sémantiques  
+✅ Tests manuels et automatisés
+
+## 🚧 Roadmap / Améliorations futures
+
+- [ ] Support de WCAG 3.0 (WCAG-Next)
+- [ ] Tests unitaires avec Jest
+- [ ] Intégration avec axe-core pour analyses avancées
+- [ ] Export PDF avec jsPDF
+- [ ] Mode sombre
+- [ ] Historique des audits (Chrome Storage API)
+- [ ] Support multilingue (i18n)
+- [ ] Graphiques visuels avec Chart.js
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à :
+
+1. Fork le projet
+2. Créer une branche (`git checkout -b feature/amelioration`)
+3. Commit vos changements (`git commit -m 'Ajout d'une fonctionnalité'`)
+4. Push vers la branche (`git push origin feature/amelioration`)
+5. Ouvrir une Pull Request
+
+## 📄 Licence
+
+Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+## 📬 Contact
+
+**Développé par** : [Votre Nom]  
+**Email** : votre.email@exemple.com  
+**LinkedIn** : [Votre profil LinkedIn](https://linkedin.com/in/votre-profil)  
+**Portfolio** : [votre-portfolio.com](https://votre-portfolio.com)
+
+## 🙏 Remerciements
+
+- [MDN Web Docs](https://developer.mozilla.org/) - Documentation exhaustive
+- [W3C WAI](https://www.w3.org/WAI/) - Standards WCAG
+- [Chrome Extensions](https://developer.chrome.com/docs/extensions/) - Documentation officielle
+- [WebAIM](https://webaim.org/) - Ressources sur l'accessibilité
+
+---
+
+⭐ **Si ce projet vous a été utile, n'hésitez pas à lui donner une étoile !**
+
+<div align="center">
+  
+  **Faisons ensemble un web plus accessible pour tous** 🌍♿
+  
+</div>
