@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audit d'Accessibilité</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>♿ Audit d'Accessibilité</h1>
+        <p class="subtitle">Analyse WCAG de la page actuelle</p>
+      </header>
+
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Analyse en cours...</p>
+      </div>
+
+      <div id="results" class="results">
+        <div class="score-section">
+          <div class="score-card">
+            <div class="score-number" id="totalScore">0</div>
+            <div class="score-label">Score</div>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <span class="stat-value passed" id="totalPassed">0</span>
+              <span class="stat-label">Tests réussis</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value failed" id="totalFailed">0</span>
+              <span class="stat-label">Problèmes détectés</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="categories">
+          <div class="category" id="imagesCategory">
+            <div class="category-header">
+              <h3>🧑‍🦯 Images</h3>
+              <span class="badge" id="imagesBadge">0</span>
+            </div>
+            <div class="category-content" id="imagesContent"></div>
+          </div>
+
+          <div class="category" id="svgCategory">
+            <div class="category-header">
+              <h3>🖼️ SVG Inline</h3>
+              <span class="badge" id="svgBadge">0</span>
+            </div>
+            <div class="category-content" id="svgContent"></div>
+          </div>
+
+          <div class="category" id="linksCategory">
+            <div class="category-header">
+              <h3>🔗 Liens</h3>
+              <span class="badge" id="linksBadge">0</span>
+            </div>
+            <div class="category-content" id="linksContent"></div>
+          </div>
+
+          <div class="category" id="headingsCategory">
+            <div class="category-header">
+              <h3>📋 Titres</h3>
+              <span class="badge" id="headingsBadge">0</span>
+            </div>
+            <div class="category-content" id="headingsContent"></div>
+          </div>
+
+          <div class="category" id="formsCategory">
+            <div class="category-header">
+              <h3>📝 Formulaires</h3>
+              <span class="badge" id="formsBadge">0</span>
+            </div>
+            <div class="category-content" id="formsContent"></div>
+          </div>
+
+          <div class="category" id="contrastCategory">
+            <div class="category-header">
+              <h3>🎨 Contraste</h3>
+              <span class="badge" id="contrastBadge">0</span>
+            </div>
+            <div class="category-content" id="contrastContent"></div>
+          </div>
+
+          <div class="category" id="structureCategory">
+            <div class="category-header">
+              <h3>🏗️ Structure</h3>
+              <span class="badge" id="structureBadge">0</span>
+            </div>
+            <div class="category-content" id="structureContent"></div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button
+            id="clearMarkersBtn"
+            class="action-btn clear-btn"
+            type="button"
+          >
+            🧹 Effacer les marqueurs
+          </button>
+          <button id="exportBtn" class="action-btn export-btn" type="button">
+            📥 Exporter le rapport
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
