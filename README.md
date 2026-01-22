@@ -52,18 +52,13 @@ Faciliter l'identification et la correction des problèmes d'accessibilité pour
    cd accessibility-audit-extension
    ```
 
-2. **Ajouter les icônes** (optionnel)
-   - Rendez-vous sur [favicon.io](https://favicon.io/emoji-favicons/)
-   - Créez des icônes 16x16, 48x48 et 128x128 pixels
-   - Renommez-les en `icon16.png`, `icon48.png`, `icon128.png`
-
-3. **Charger l'extension dans Chrome**
+2. **Charger l'extension dans Chrome**
    - Ouvrez `chrome://extensions/`
    - Activez le **Mode développeur**
    - Cliquez sur **Charger l'extension non empaquetée**
    - Sélectionnez le dossier du projet
 
-4. **Utiliser l'extension**
+3. **Utiliser l'extension**
    - Visitez n'importe quelle page web
    - Cliquez sur l'icône de l'extension
    - Consultez le rapport d'accessibilité
