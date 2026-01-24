@@ -181,6 +181,8 @@ function copyGitHubMarkdown(issue, category, buttonElement) {
     markdown += `- [MDN - Identifier le SVG comme une image](https://developer.mozilla.org/fr/docs/Web/HTML/Reference/Elements/img#identifier_le_svg_comme_une_image)\n`;
   } else if (category === "links") {
     markdown += `- [MDN - Créer un lien avec une image](https://developer.mozilla.org/fr/docs/Web/HTML/Reference/Elements/img#cr%C3%A9er_un_lien_avec_une_image)\n`;
+  } else if (category === "headings") {
+    markdown += `- [MDN - Structurer le contenu avec des titres](https://developer.mozilla.org/fr/docs/Web/HTML/Reference/Elements/Heading_Elements#accessibilit%C3%A9)\n`;
   }
 
   markdown += `- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)\n`;
@@ -690,6 +692,12 @@ function getMdnLinks(category) {
       {
         title: "Créer un lien avec une image",
         url: "https://developer.mozilla.org/fr/docs/Web/HTML/Reference/Elements/img#cr%C3%A9er_un_lien_avec_une_image",
+      },
+    ],
+    headings: [
+      {
+        title: "Structurer le contenu avec des titres",
+        url: "https://developer.mozilla.org/fr/docs/Web/HTML/Reference/Elements/Heading_Elements#accessibilit%C3%A9",
       },
     ],
   };
