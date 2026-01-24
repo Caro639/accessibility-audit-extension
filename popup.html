@@ -40,7 +40,13 @@
           <div class="category" id="imagesCategory">
             <div class="category-header">
               <h3>🧑‍🦯 Images</h3>
-              <span class="badge" id="imagesBadge">0</span>
+              <div class="category-controls">
+                <label class="category-switch">
+                  <input type="checkbox" class="audit-filter" data-category="images" checked aria-label="Activer/désactiver l'audit des images" />
+                  <span class="switch-slider-mini"></span>
+                </label>
+                <span class="badge" id="imagesBadge">0</span>
+              </div>
             </div>
             <div class="category-content" id="imagesContent"></div>
           </div>
@@ -48,7 +54,13 @@
           <div class="category" id="svgCategory">
             <div class="category-header">
               <h3>🖼️ SVG Inline</h3>
-              <span class="badge" id="svgBadge">0</span>
+              <div class="category-controls">
+                <label class="category-switch">
+                  <input type="checkbox" class="audit-filter" data-category="svg" checked aria-label="Activer/désactiver l'audit des SVG" />
+                  <span class="switch-slider-mini"></span>
+                </label>
+                <span class="badge" id="svgBadge">0</span>
+              </div>
             </div>
             <div class="category-content" id="svgContent"></div>
           </div>
@@ -56,7 +68,13 @@
           <div class="category" id="linksCategory">
             <div class="category-header">
               <h3>🔗 Liens</h3>
-              <span class="badge" id="linksBadge">0</span>
+              <div class="category-controls">
+                <label class="category-switch">
+                  <input type="checkbox" class="audit-filter" data-category="links" checked aria-label="Activer/désactiver l'audit des liens" />
+                  <span class="switch-slider-mini"></span>
+                </label>
+                <span class="badge" id="linksBadge">0</span>
+              </div>
             </div>
             <div class="category-content" id="linksContent"></div>
           </div>
@@ -64,7 +82,13 @@
           <div class="category" id="headingsCategory">
             <div class="category-header">
               <h3>📋 Titres</h3>
-              <span class="badge" id="headingsBadge">0</span>
+              <div class="category-controls">
+                <label class="category-switch">
+                  <input type="checkbox" class="audit-filter" data-category="headings" checked aria-label="Activer/désactiver l'audit des titres" />
+                  <span class="switch-slider-mini"></span>
+                </label>
+                <span class="badge" id="headingsBadge">0</span>
+              </div>
             </div>
             <div class="category-content" id="headingsContent"></div>
           </div>
@@ -72,7 +96,13 @@
           <div class="category" id="formsCategory">
             <div class="category-header">
               <h3>📝 Formulaires</h3>
-              <span class="badge" id="formsBadge">0</span>
+              <div class="category-controls">
+                <label class="category-switch">
+                  <input type="checkbox" class="audit-filter" data-category="forms" checked aria-label="Activer/désactiver l'audit des formulaires" />
+                  <span class="switch-slider-mini"></span>
+                </label>
+                <span class="badge" id="formsBadge">0</span>
+              </div>
             </div>
             <div class="category-content" id="formsContent"></div>
           </div>
@@ -80,7 +110,13 @@
           <div class="category" id="contrastCategory">
             <div class="category-header">
               <h3>🎨 Contraste</h3>
-              <span class="badge" id="contrastBadge">0</span>
+              <div class="category-controls">
+                <label class="category-switch">
+                  <input type="checkbox" class="audit-filter" data-category="contrast" checked aria-label="Activer/désactiver l'audit du contraste" />
+                  <span class="switch-slider-mini"></span>
+                </label>
+                <span class="badge" id="contrastBadge">0</span>
+              </div>
             </div>
             <div class="category-content" id="contrastContent"></div>
           </div>
@@ -88,7 +124,13 @@
           <div class="category" id="structureCategory">
             <div class="category-header">
               <h3>🏗️ Structure</h3>
-              <span class="badge" id="structureBadge">0</span>
+              <div class="category-controls">
+                <label class="category-switch">
+                  <input type="checkbox" class="audit-filter" data-category="structure" checked aria-label="Activer/désactiver l'audit de la structure" />
+                  <span class="switch-slider-mini"></span>
+                </label>
+                <span class="badge" id="structureBadge">0</span>
+              </div>
             </div>
             <div class="category-content" id="structureContent"></div>
           </div>
@@ -100,10 +142,10 @@
             class="action-btn clear-btn"
             type="button"
           >
-            🧹 Effacer les marqueurs
+            Effacer les marqueurs
           </button>
           <button id="exportBtn" class="action-btn export-btn" type="button">
-            📥 Exporter le rapport
+            Exporter le rapport
           </button>
         </div>
       </div>
