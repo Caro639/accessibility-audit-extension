@@ -33,7 +33,9 @@ Faciliter l'identification et la correction des problèmes d'accessibilité pour
 ### Fonctionnalités avancées
 
 ✅ **Marqueurs visuels** - Bordures de couleur animées + badges sur les éléments problématiques  
-✅ **Navigation rapide** - Boutons "Voir dans la page" pour scroller vers les erreurs  
+✅ **Navigation rapide** - Boutons "Voir dans la page" pour scroller vers les erreurs
+✅ **Catégorisation des problèmes** - Par type et sévérité (Erreur, Avertissement, Info)
+✅ **Ressources utiles** - Liens MDN pour chaque critère non conforme
 ✅ **Score global** - Calcul du taux de conformité en temps réel  
 ✅ **Export de rapport** - Téléchargement d'un rapport texte détaillé  
 ✅ **Messages pédagogiques** - Explications de l'importance de chaque critère  
