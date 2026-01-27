@@ -397,33 +397,6 @@ h1 {
   transform: translateY(0);
 }
 
-/* Bouton "Copier pour Jira" */
-/* .jira-btn {
-  margin-top: 8px;
-  margin-right: 6px;
-  padding: 6px 12px;
-  background: #320909;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.jira-btn:hover {
-  background: #0e0202;
-  transform: translateY(-1px);
-}
-
-.jira-btn:active {
-  transform: translateY(0);
-} */
-
 /* Bouton "Copier Markdown" */
 .markdown-btn {
   margin-top: 8px;

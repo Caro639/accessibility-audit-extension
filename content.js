@@ -484,12 +484,16 @@ function checkHeadings() {
     issues.push({
       element: "Structure",
       issue: "Aucun titre H1 trouvé sur la page",
+      explanation:
+        "Le H1 est essentiel pour la structure et le référencement. Il indique le sujet principal de la page aux utilisateurs et aux lecteurs d'écran.",
       severity: "élevée",
     });
   } else if (h1Count > 1) {
     issues.push({
       element: "Structure",
       issue: `${h1Count} titres H1 trouvés (recommandé: 1 seul)`,
+      explanation:
+        "Une page doit avoir un seul H1 pour une structure claire. Plusieurs H1 peuvent dérouter les utilisateurs de lecteurs d'écran.",
       severity: "moyenne",
     });
   }
@@ -537,6 +541,8 @@ function checkHeadings() {
       issues.push({
         element: `${heading.tagName}`,
         issue: `Saut de niveau de titre (de H${previousLevel} à H${level})`,
+        explanation:
+          "Respecter la hiérarchie des titres (H1→H2→H3) aide les utilisateurs de lecteurs d'écran à comprendre la structure du document.",
         severity: "moyenne",
         text: heading.textContent.trim(),
         headingId: headingId,
@@ -584,6 +590,8 @@ function checkHeadings() {
       issues.push({
         element: `${heading.tagName} ${index + 1}`,
         issue: "Titre vide",
+        explanation:
+          "Un titre vide n'apporte aucune information et perturbe la navigation pour les utilisateurs de technologies d'assistance.",
         severity: "élevée",
         headingId: headingId,
       });
@@ -682,6 +690,8 @@ function checkForms() {
       issues.push({
         element: `${input.tagName} ${index + 1}`,
         issue: "Champ de formulaire sans étiquette",
+        explanation:
+          "Sans label ou aria-label, les utilisateurs non-voyants ne savent pas quel type d'information saisir dans ce champ.",
         severity: "élevée",
         type: input.type || "text",
         formId: formId,
@@ -758,6 +768,8 @@ function checkLanguage() {
     issues.push({
       element: "HTML",
       issue: "Attribut lang manquant sur l'élément <html>",
+      explanation:
+        "L'attribut lang indique la langue du contenu, permettant aux lecteurs d'écran d'utiliser la bonne prononciation.",
       severity: "élevée",
     });
   }
@@ -780,6 +792,8 @@ function checkLandmarks() {
     issues.push({
       element: "Structure",
       issue: 'Aucun élément <main> ou role="main" trouvé',
+      explanation:
+        "L'élément <main> identifie le contenu principal et permet aux utilisateurs de lecteurs d'écran d'y accéder directement.",
       severity: "moyenne",
     });
   }
@@ -788,6 +802,8 @@ function checkLandmarks() {
     issues.push({
       element: "Structure",
       issue: 'Aucun élément <nav> ou role="navigation" trouvé',
+      explanation:
+        "L'élément <nav> aide les utilisateurs de technologies d'assistance à identifier et accéder rapidement à la navigation du site.",
       severity: "faible",
     });
   }
@@ -874,6 +890,8 @@ function checkButtons() {
       issues.push({
         element: `Bouton ${index + 1}`,
         issue: "Bouton sans texte descriptif",
+        explanation:
+          "Un bouton sans texte ou aria-label est inutilisable pour les utilisateurs de lecteurs d'écran qui ne comprennent pas son action.",
         severity: "élevée",
         buttonId: buttonId,
       });
