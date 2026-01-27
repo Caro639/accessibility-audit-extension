@@ -3,7 +3,7 @@
   "name": "Audit d'Accessibilité Web",
   "version": "1.0.0",
   "description": "Extension pour auditer l'accessibilité des pages web selon les normes WCAG",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting", "storage"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -22,6 +22,12 @@
       "matches": ["<all_urls>"],
       "js": ["content.js"],
       "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["report.html", "report.js"],
+      "matches": ["<all_urls>"]
     }
   ]
 }

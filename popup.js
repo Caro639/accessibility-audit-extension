@@ -107,7 +107,6 @@ function copyGitHubMarkdown(issue, category, buttonElement) {
     links: "Lien",
     headings: "Titre",
     forms: "Formulaire",
-    colorblind: "Daltonisme",
     structure: "Structure",
   };
 
@@ -174,19 +173,12 @@ function copyGitHubMarkdown(issue, category, buttonElement) {
   markdown += `\n`;
   markdown += `### 📚 Ressources\n\n`;
 
-  // Lien MDN spécifique selon la catégorie
-  if (category === "images") {
-    markdown += `- [MDN - Accessibilité des images](https://developer.mozilla.org/fr/docs/Web/HTML/Reference/Elements/img#accessibilit%C3%A9)\n`;
-  } else if (category === "svg") {
-    markdown += `- [MDN - Identifier le SVG comme une image](https://developer.mozilla.org/fr/docs/Web/HTML/Reference/Elements/img#identifier_le_svg_comme_une_image)\n`;
-  } else if (category === "links") {
-    markdown += `- [MDN - Créer un lien avec une image](https://developer.mozilla.org/fr/docs/Web/HTML/Reference/Elements/img#cr%C3%A9er_un_lien_avec_une_image)\n`;
-  } else if (category === "headings") {
-    markdown += `- [MDN - Structurer le contenu avec des titres](https://developer.mozilla.org/fr/docs/Web/HTML/Reference/Elements/Heading_Elements#accessibilit%C3%A9)\n`;
-  } else if (category === "forms") {
-    markdown += `- [MDN - Formulaires accessibles](https://developer.mozilla.org/fr/docs/Web/HTML/Reference/Elements/input#accessibilit%C3%A9)\n`;
-  } else if (category === "structure") {
-    markdown += `- [MDN - Structure du document](https://developer.mozilla.org/fr/docs/Learn_web_development/Core/Accessibility/HTML#une_bonne_s%C3%A9mantique)\n`;
+  // Récupérer tous les liens MDN pour la catégorie
+  const mdnLinks = getMdnLinks(category);
+  if (mdnLinks.length > 0) {
+    mdnLinks.forEach((link) => {
+      markdown += `- [${link.title}](${link.url})\n`;
+    });
   }
 
   markdown += `- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)\n`;
@@ -492,25 +484,51 @@ function displayCategory(name, data, contentId, badgeId) {
       '<p class="success-message">✅ Aucun problème détecté</p>';
   } else {
     contentElement.innerHTML = data.issues
-      .map(
-        (issue, issueIndex) => `
+      .map((issue, issueIndex) => {
+        // Générer le HTML pour les liens MDN
+        const mdnLinks = getMdnLinks(name);
+        let mdnLinksHTML = "";
+
+        if (mdnLinks.length > 0) {
+          const linksContent = mdnLinks
+            .map(
+              (link) =>
+                `<p class="issue-mdn-link"><a href="${link.url}" target="_blank" rel="noopener noreferrer">${link.title}</a></p>`,
+            )
+            .join("");
+
+          if (issueIndex === 0) {
+            // Première erreur : afficher les liens normalement
+            mdnLinksHTML = linksContent;
+          } else {
+            // Erreurs suivantes : bouton repliable avec ID unique par catégorie
+            mdnLinksHTML = `
+                <div class="mdn-links-collapsed">
+                  <span class="toggle-resources-link" data-resources-id="res-${name}-${issueIndex}">
+                    <svg class="resources-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="resources-text">Ressources</span>
+                  </span>
+                  <div class="mdn-links-content" id="res-${name}-${issueIndex}" style="display: none;">
+                    ${linksContent}
+                  </div>
+                </div>
+              `;
+          }
+        }
+
+        return `
       <div class="issue ${issue.severity}">
         <div class="issue-header">
           <span class="issue-element">${issue.element}</span>
           <span class="severity-badge severity-${issue.severity}">${issue.severity}</span>
         </div>
         <p class="issue-description">${issue.issue}</p>
-        ${issue.explanation ? `<p class="issue-explanation">💡 ${issue.explanation}</p>` : ""}
-        ${
-          getMdnLinks(name).length > 0
-            ? getMdnLinks(name)
-                .map(
-                  (link) =>
-                    `<p class="issue-mdn-link"><a href="${link.url}" target="_blank" rel="noopener noreferrer">${link.title}</a></p>`,
-                )
-                .join("")
-            : ""
-        }
+        ${issue.explanation ? `<p class="issue-explanation"><svg class="explanation-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.13 15.87 2 12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 21H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> ${issue.explanation}</p>` : ""}
+        ${mdnLinksHTML}
         ${issue.text ? `<p class="issue-detail">Texte: "${issue.text.length > 80 ? issue.text.substring(0, 80) + "..." : issue.text}"</p>` : ""}
         ${issue.src ? `<p class="issue-detail">Source: ${issue.src.length > 60 ? issue.src.substring(0, 60) + "..." : issue.src}</p>` : ""}
         ${issue.href ? `<p class="issue-detail">Lien: ${issue.href.length > 60 ? issue.href.substring(0, 60) + "..." : issue.href}</p>` : ""}
@@ -523,8 +541,8 @@ function displayCategory(name, data, contentId, badgeId) {
         ${issue.buttonId ? `<button class="goto-btn" data-button-id="${issue.buttonId}">Voir dans la page</button>` : ""}
         <button class="markdown-btn" data-issue-index="${issueIndex}" data-category="${name}">Copier Markdown</button>
       </div>
-    `,
-      )
+    `;
+      })
       .join("");
 
     // Ajouter les écouteurs d'événements pour les boutons de navigation
@@ -593,6 +611,25 @@ function displayCategory(name, data, contentId, badgeId) {
         copyGitHubMarkdown(issue, category, btn);
       });
     });
+
+    // Ajouter les écouteurs pour les liens "Ressources"
+    contentElement.querySelectorAll(".toggle-resources-link").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const resourcesId = btn.getAttribute("data-resources-id");
+        const resourcesElement = document.getElementById(resourcesId);
+        const textElement = btn.querySelector(".resources-text");
+
+        if (resourcesElement.style.display === "none") {
+          resourcesElement.style.display = "block";
+          textElement.textContent = "Masquer";
+          btn.classList.add("active");
+        } else {
+          resourcesElement.style.display = "none";
+          textElement.textContent = "Ressources";
+          btn.classList.remove("active");
+        }
+      });
+    });
   }
 }
 
@@ -607,43 +644,34 @@ function showError(message) {
 }
 
 function exportReport(results, score) {
-  const reportDate = new Date().toLocaleDateString("fr-FR");
-  let report = `RAPPORT D'AUDIT D'ACCESSIBILITÉ\n`;
-  report += `Date: ${reportDate}\n`;
-  report += `Score global: ${score}%\n\n`;
-  report += `=${"=".repeat(50)}\n\n`;
-
-  Object.entries(results).forEach(([category, data]) => {
-    report += `${category.toUpperCase()}\n`;
-    report += `-${"-".repeat(50)}\n`;
-    report += `Total d'éléments vérifiés: ${data.total}\n`;
-    report += `Problèmes détectés: ${data.issues.length}\n\n`;
-
-    if (data.issues.length > 0) {
-      data.issues.forEach((issue, index) => {
-        report += `${index + 1}. ${issue.element}\n`;
-        report += `   Problème: ${issue.issue}\n`;
-        report += `   Sévérité: ${issue.severity}\n`;
-        if (issue.text) report += `   Texte: ${issue.text}\n`;
-        if (issue.src) report += `   Source: ${issue.src}\n`;
-        if (issue.href) report += `   Lien: ${issue.href}\n`;
-        report += `\n`;
-      });
-    } else {
-      report += `✅ Aucun problème détecté\n\n`;
-    }
-
-    report += `\n`;
+  const reportDate = new Date().toLocaleDateString("fr-FR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
+  const reportTime = new Date().toLocaleTimeString("fr-FR");
 
-  // Télécharger le rapport
-  const blob = new Blob([report], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `audit-accessibilite-${Date.now()}.txt`;
-  a.click();
-  URL.revokeObjectURL(url);
+  // Obtenir l'URL de la page auditée
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    const pageUrl = tabs[0]?.url || "Page inconnue";
+    const pageTitle = tabs[0]?.title || "Sans titre";
+
+    // Stocker les données du rapport dans session storage
+    const reportData = {
+      results,
+      score,
+      pageUrl,
+      pageTitle,
+      reportDate,
+      reportTime,
+    };
+
+    chrome.storage.session.set({ reportData }, function () {
+      // Ouvrir la page de rapport
+      const reportUrl = chrome.runtime.getURL("report.html");
+      chrome.tabs.create({ url: reportUrl });
+    });
+  });
 }
 
 // Fonction pour obtenir le lien MDN selon la catégorie

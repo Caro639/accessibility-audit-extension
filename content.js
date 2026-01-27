@@ -767,7 +767,7 @@ function checkLanguage() {
   if (!htmlElement.hasAttribute("lang")) {
     issues.push({
       element: "HTML",
-      issue: "Attribut lang manquant sur l'élément <html>",
+      issue: "Attribut lang manquant sur l'élément &lt;html&gt;",
       explanation:
         "L'attribut lang indique la langue du contenu, permettant aux lecteurs d'écran d'utiliser la bonne prononciation.",
       severity: "élevée",
@@ -793,7 +793,7 @@ function checkLandmarks() {
       element: "Structure",
       issue: 'Aucun élément <main> ou role="main" trouvé',
       explanation:
-        "L'élément <main> identifie le contenu principal et permet aux utilisateurs de lecteurs d'écran d'y accéder directement.",
+        "L'élément &lt;main&gt; identifie le contenu principal et permet aux utilisateurs de lecteurs d'écran d'y accéder directement.",
       severity: "moyenne",
     });
   }
@@ -803,7 +803,7 @@ function checkLandmarks() {
       element: "Structure",
       issue: 'Aucun élément <nav> ou role="navigation" trouvé',
       explanation:
-        "L'élément <nav> aide les utilisateurs de technologies d'assistance à identifier et accéder rapidement à la navigation du site.",
+        "L'élément &lt;nav&gt; aide les utilisateurs de technologies d'assistance à identifier et accéder rapidement à la navigation du site.",
       severity: "faible",
     });
   }

@@ -167,6 +167,16 @@ h1 {
   font-size: 14px;
   font-weight: 600;
   color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Icônes des catégories */
+.category-icon {
+  color: #8b5cf6;
+  flex-shrink: 0;
+  stroke-width: 2;
 }
 
 .category-controls {
@@ -274,20 +284,20 @@ h1 {
 /* Issues */
 .issue {
   background: #f3e8ff;
-  border-left: 4px solid #4a16a3;
+  border-left: 4px solid #8b5cf6;
   padding: 12px;
   margin-bottom: 10px;
   border-radius: 4px;
 }
 
 .issue.moyenne {
-  background: #fffbeb;
-  border-left-color: #f59e0b;
+  background: #f3e8ff;
+  border-left-color: #8b5cf6;
 }
 
 .issue.faible {
-  background: #f0f9ff;
-  border-left-color: #3b82f6;
+  background: #f3e8ff;
+  border-left-color: #8b5cf6;
 }
 
 .issue-header {
@@ -349,6 +359,60 @@ h1 {
   margin-top: 8px;
   border-left: 3px solid #16a34a;
   font-weight: 500;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.explanation-icon {
+  color: #16a34a;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Conteneur pour les ressources repliables */
+.mdn-links-collapsed {
+  margin-top: 8px;
+}
+
+/* Lien pour afficher/masquer les ressources */
+.toggle-resources-link {
+  color: #8b5cf6;
+  font-size: 11px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.toggle-resources-link:hover {
+  color: #7c3aed;
+}
+
+.toggle-resources-link:hover .resources-icon {
+  transform: translateX(2px);
+}
+
+.toggle-resources-link .resources-icon {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+  color: #8b5cf6;
+}
+
+.toggle-resources-link .resources-text {
+  font-size: 11px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+}
+
+.mdn-links-content {
+  margin-top: 8px;
+  padding-left: 8px;
 }
 
 /* Lien MDN */
@@ -451,12 +515,12 @@ h1 {
 }
 
 .clear-btn {
-  background: #f1f5f9;
-  color: #475569;
+  background: #cbd5e1;
+  color: #334155;
 }
 
 .clear-btn:hover {
-  background: #e2e8f0;
+  background: #94a3b8;
 }
 
 .action-btn:active {
