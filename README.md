@@ -72,15 +72,15 @@ Faciliter l'identification et la correction des problèmes d'accessibilité pour
 
 ### Interface principale
 
-![Interface](https://via.placeholder.com/600x400/f8fafc/475569?text=Interface+du+popup)
+![Interface](./interface-principale-extension.webp)
 
 ### Marqueurs visuels
 
-![Marqueurs](https://via.placeholder.com/600x400/fef2f2/dc2626?text=Marqueurs+visuels+sur+images)
+![Marqueurs](./marqueurs-extension.webp)
 
 ### Rapport détaillé
 
-![Rapport](https://via.placeholder.com/600x400/ecfdf5/10b981?text=Rapport+d%27audit)
+![Rapport](./rapport-extension.webp)
 
 ## 🛠️ Technologies
 
