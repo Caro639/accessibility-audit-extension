@@ -1201,7 +1201,10 @@ function scrollToButton(buttonId) {
 
 // Écouter les messages du popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "runAudit") {
+  if (request.action === "ping") {
+    // Répondre au ping pour confirmer que le script est injecté
+    sendResponse({ ready: true });
+  } else if (request.action === "runAudit") {
     const results = auditAccessibility();
     sendResponse({ results: results });
   } else if (request.action === "clearVisualFeedback") {

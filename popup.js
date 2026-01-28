@@ -325,27 +325,55 @@ async function runAudit() {
       currentWindow: true,
     });
 
+    // Vérifier si le script est déjà injecté en testant la communication
     chrome.tabs.sendMessage(
       tab.id,
-      { action: "runAudit" },
-      function (response) {
-        if (chrome.runtime.lastError) {
-          showError(
-            "Erreur: Impossible d'analyser cette page. Actualisez la page et réessayez.",
-          );
-          return;
-        }
+      { action: "ping" },
+      async function (response) {
+        // Si pas de réponse, le script n'est pas injecté
+        if (chrome.runtime.lastError || !response) {
+          // Injecter le content script
+          try {
+            await chrome.scripting.executeScript({
+              target: { tabId: tab.id },
+              files: ["content.js"],
+            });
 
-        if (response && response.results) {
-          // Stocker les résultats complets
-          fullResults = response.results;
-          displayResults(response.results);
+            // Attendre que le script soit prêt puis lancer l'audit
+            setTimeout(() => {
+              launchAudit(tab.id);
+            }, 100);
+          } catch (injectionError) {
+            showError(
+              "Erreur d'injection du script: " + injectionError.message,
+            );
+          }
+        } else {
+          // Le script est déjà injecté, lancer l'audit directement
+          launchAudit(tab.id);
         }
       },
     );
   } catch (error) {
     showError("Erreur lors de l'analyse: " + error.message);
   }
+}
+
+function launchAudit(tabId) {
+  chrome.tabs.sendMessage(tabId, { action: "runAudit" }, function (response) {
+    if (chrome.runtime.lastError) {
+      showError(
+        "Erreur: Impossible d'analyser cette page. Actualisez la page et réessayez.",
+      );
+      return;
+    }
+
+    if (response && response.results) {
+      // Stocker les résultats complets
+      fullResults = response.results;
+      displayResults(response.results);
+    }
+  });
 }
 
 function displayResults(results) {
