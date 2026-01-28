@@ -76,11 +76,11 @@ Faciliter l'identification et la correction des problèmes d'accessibilité pour
 
 ### Marqueurs visuels
 
-![Marqueurs](./marqueurs-extension.webp)
+<img src="./marqueurs-extension.webp" alt="Marqueurs" width="600">
 
 ### Rapport détaillé
 
-![Rapport](./rapport-extension.webp)
+<img src="./rapport-extension.webp" alt="Rapport" width="600">
 
 ## 🛠️ Technologies
 
