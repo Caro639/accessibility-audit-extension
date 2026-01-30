@@ -1,7 +1,13 @@
-// Popup script pour afficher les résultats de l'audit
+﻿// Popup script pour afficher les résultats de l'audit
+
+import { TIMEOUTS, SCORES } from "./constants.js";
+import {
+  generateGitHubMarkdown,
+  copyMarkdownToClipboard,
+} from "./utils-markdown.js";
 
 // État des filtres actifs
-let activeFilters = {
+const activeFilters = {
   images: true,
   svg: true,
   links: true,
@@ -18,12 +24,12 @@ let fullResults = null;
 document.addEventListener("DOMContentLoaded", function () {
   runAudit();
 
-  // Gestionnaire pour le bouton d'effacement des marqueurs
+  // Handler for markers clear button
   document
     .getElementById("clearMarkersBtn")
     .addEventListener("click", clearMarkers);
 
-  // Gestionnaires pour les filtres
+  // Handlers for filters
   setupFilterHandlers();
 });
 
@@ -37,18 +43,18 @@ async function clearMarkers() {
     chrome.tabs.sendMessage(
       tab.id,
       { action: "clearVisualFeedback" },
-      function (response) {
+      function (_response) {
         if (chrome.runtime.lastError) {
           console.error("Erreur:", chrome.runtime.lastError);
           return;
         }
-        // Confirmation visuelle (optionnel)
+        // Visual confirmation (optional)
         const btn = document.getElementById("clearMarkersBtn");
         const originalText = btn.textContent;
         btn.textContent = "✓ Marqueurs effacés";
         setTimeout(() => {
           btn.textContent = originalText;
-        }, 2000);
+        }, TIMEOUTS.FEEDBACK_MESSAGE);
       },
     );
   } catch (error) {
@@ -66,7 +72,7 @@ async function navigateToImage(imageId) {
     chrome.tabs.sendMessage(
       tab.id,
       { action: "scrollToImage", imageId: imageId },
-      function (response) {
+      function (_response) {
         if (chrome.runtime.lastError) {
           console.error("Erreur:", chrome.runtime.lastError);
           return;
@@ -88,7 +94,7 @@ async function navigateToLink(linkId) {
     chrome.tabs.sendMessage(
       tab.id,
       { action: "scrollToLink", linkId: linkId },
-      function (response) {
+      function (_response) {
         if (chrome.runtime.lastError) {
           console.error("Erreur:", chrome.runtime.lastError);
           return;
@@ -101,110 +107,8 @@ async function navigateToLink(linkId) {
 }
 
 function copyGitHubMarkdown(issue, category, buttonElement) {
-  const categoryNames = {
-    images: "Image",
-    svg: "SVG",
-    links: "Lien",
-    headings: "Titre",
-    forms: "Formulaire",
-    structure: "Structure",
-  };
-
-  const priorityEmojis = {
-    élevée: "🔴",
-    moyenne: "🟡",
-    faible: "🔵",
-  };
-
-  const categoryName = categoryNames[category] || category;
-  const priorityEmoji = priorityEmojis[issue.severity] || "⚪";
-
-  // Générer le Markdown standard
-  let markdown = `## ${priorityEmoji} [Accessibilité] ${issue.issue}\n\n`;
-  markdown += `**Type :** ${categoryName}\n`;
-  markdown += `**Priorité :** ${issue.severity}\n`;
-  markdown += `**Élément :** ${issue.element}\n\n`;
-
-  markdown += `### 📋 Description du problème\n\n`;
-  markdown += `${issue.issue}\n\n`;
-
-  if (issue.explanation) {
-    markdown += `> 💡 **Impact sur l'accessibilité**\n`;
-    markdown += `> \n`;
-    markdown += `> ${issue.explanation}\n\n`;
-  }
-
-  markdown += `### 🔍 Détails techniques\n\n`;
-  if (issue.src) {
-    markdown += `- **Source :** \`${issue.src}\`\n`;
-  }
-  if (issue.href) {
-    markdown += `- **Lien :** \`${issue.href}\`\n`;
-  }
-  if (issue.text) {
-    markdown += `- **Texte actuel :** "${issue.text}"\n`;
-  }
-  if (issue.type) {
-    markdown += `- **Type :** ${issue.type}\n`;
-  }
-
-  markdown += `\n`;
-  markdown += `### ✅ Solution recommandée\n\n`;
-
-  // Suggestions selon le type d'erreur
-  if (category === "images") {
-    markdown += `\`\`\`html\n<img src="..." alt="Description de l'image" />\n\`\`\`\n\n`;
-    markdown += `Ajouter un attribut \`alt\` descriptif à l'image.\n`;
-  } else if (category === "svg") {
-    markdown += `\`\`\`html\n<svg role="img" aria-label="Description du SVG">\n  <!-- ou -->\n  <title>Description du SVG</title>\n</svg>\n\`\`\`\n\n`;
-    markdown += `Ajouter \`role="img"\` + \`aria-label\`, ou un élément \`<title>\` interne.\n`;
-  } else if (category === "links") {
-    markdown += `\`\`\`html\n<a href="..." aria-label="Description du lien">Texte du lien</a>\n\`\`\`\n\n`;
-    markdown += `Ajouter un texte descriptif ou un attribut \`aria-label\`.\n`;
-  } else if (category === "headings") {
-    markdown += `Respecter la hiérarchie des titres (H1 → H2 → H3).\n`;
-  } else if (category === "forms") {
-    markdown += `\`\`\`html\n<label for="input-id">Label du champ</label>\n<input id="input-id" type="text" />\n\`\`\`\n\n`;
-    markdown += `Associer un \`<label>\` à chaque champ de formulaire.\n`;
-  } else if (category === "structure") {
-    markdown += `Vérifier la structure HTML du document (landmarks, régions ARIA).\n`;
-  }
-
-  markdown += `\n`;
-  markdown += `### 📚 Ressources\n\n`;
-
-  // Récupérer tous les liens MDN pour la catégorie
-  const mdnLinks = getMdnLinks(category);
-  if (mdnLinks.length > 0) {
-    mdnLinks.forEach((link) => {
-      markdown += `- [${link.title}](${link.url})\n`;
-    });
-  }
-
-  markdown += `- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)\n`;
-  markdown += `- Testé avec l'extension Audit d'Accessibilité Web\n`;
-
-  // Copier dans le presse-papier
-  navigator.clipboard
-    .writeText(markdown)
-    .then(() => {
-      // Feedback visuel
-      const originalText = buttonElement.textContent;
-      buttonElement.textContent = "✓ Copié !";
-      buttonElement.style.background = "#10b981";
-
-      setTimeout(() => {
-        buttonElement.textContent = originalText;
-        buttonElement.style.background = "";
-      }, 2000);
-    })
-    .catch((err) => {
-      console.error("Erreur lors de la copie:", err);
-      buttonElement.textContent = "❌ Erreur";
-      setTimeout(() => {
-        buttonElement.textContent = "📝 Copier Markdown";
-      }, 2000);
-    });
+  const markdown = generateGitHubMarkdown(issue, category, getMdnLinks);
+  copyMarkdownToClipboard(markdown, buttonElement, "✓ Copié !");
 }
 
 async function navigateToSVG(svgId) {
@@ -217,7 +121,7 @@ async function navigateToSVG(svgId) {
     chrome.tabs.sendMessage(
       tab.id,
       { action: "scrollToSVG", svgId: svgId },
-      function (response) {
+      function (_response) {
         if (chrome.runtime.lastError) {
           console.error("Erreur:", chrome.runtime.lastError);
           return;
@@ -239,7 +143,7 @@ async function navigateToHeading(headingId) {
     chrome.tabs.sendMessage(
       tab.id,
       { action: "scrollToHeading", headingId: headingId },
-      function (response) {
+      function (_response) {
         if (chrome.runtime.lastError) {
           console.error("Erreur:", chrome.runtime.lastError);
           return;
@@ -261,7 +165,7 @@ async function navigateToForm(formId) {
     chrome.tabs.sendMessage(
       tab.id,
       { action: "scrollToForm", formId: formId },
-      function (response) {
+      function (_response) {
         if (chrome.runtime.lastError) {
           console.error("Erreur:", chrome.runtime.lastError);
           return;
@@ -283,7 +187,7 @@ async function navigateToButton(buttonId) {
     chrome.tabs.sendMessage(
       tab.id,
       { action: "scrollToButton", buttonId: buttonId },
-      function (response) {
+      function (_response) {
         if (chrome.runtime.lastError) {
           console.error("Erreur:", chrome.runtime.lastError);
           return;
@@ -306,7 +210,7 @@ async function applyColorblindFilter(filterType) {
     chrome.tabs.sendMessage(
       tab.id,
       { action: "applyColorblindFilter", filterType: filterType },
-      function (response) {
+      function (_response) {
         if (chrome.runtime.lastError) {
           console.error("Erreur:", chrome.runtime.lastError);
           return;
@@ -332,7 +236,7 @@ async function runAudit() {
       async function (response) {
         // Si pas de réponse, le script n'est pas injecté
         if (chrome.runtime.lastError || !response) {
-          // Injecter le content script
+          // Inject content script
           try {
             await chrome.scripting.executeScript({
               target: { tabId: tab.id },
@@ -345,7 +249,7 @@ async function runAudit() {
             }, 100);
           } catch (injectionError) {
             showError(
-              "Erreur d'injection du script: " + injectionError.message,
+              `Erreur d'injection du script: ${injectionError.message}`,
             );
           }
         } else {
@@ -355,7 +259,7 @@ async function runAudit() {
       },
     );
   } catch (error) {
-    showError("Erreur lors de l'analyse: " + error.message);
+    showError(`Erreur lors de l'analyse: ${error.message}`);
   }
 }
 
@@ -398,16 +302,16 @@ function displayResults(results) {
   const score =
     totalTests > 0 ? Math.round((1 - totalIssues / totalTests) * 100) : 100;
 
-  // Afficher le score
-  document.getElementById("totalScore").textContent = score + "%";
+  // Display score
+  document.getElementById("totalScore").textContent = `${score}%`;
   document.getElementById("totalPassed").textContent = totalTests - totalIssues;
   document.getElementById("totalFailed").textContent = totalIssues;
 
-  // Colorier le score
+  // Color the score
   const scoreElement = document.getElementById("totalScore");
-  if (score >= 80) {
+  if (score >= SCORES.GOOD_THRESHOLD) {
     scoreElement.style.color = "#10b981";
-  } else if (score >= 60) {
+  } else if (score >= SCORES.MEDIUM_THRESHOLD) {
     scoreElement.style.color = "#f59e0b";
   } else {
     scoreElement.style.color = "#ef4444";
@@ -463,7 +367,7 @@ function displayResults(results) {
     });
   });
 
-  // Combiner lang et landmarks pour la structure
+  // Combine lang and landmarks for structure
   const structureIssues = [
     ...filteredResults.lang.issues,
     ...filteredResults.landmarks.issues,
@@ -557,9 +461,9 @@ function displayCategory(name, data, contentId, badgeId) {
         <p class="issue-description">${issue.issue}</p>
         ${issue.explanation ? `<p class="issue-explanation"><svg class="explanation-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.13 15.87 2 12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 21H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> ${issue.explanation}</p>` : ""}
         ${mdnLinksHTML}
-        ${issue.text ? `<p class="issue-detail">Texte: "${issue.text.length > 80 ? issue.text.substring(0, 80) + "..." : issue.text}"</p>` : ""}
-        ${issue.src ? `<p class="issue-detail">Source: ${issue.src.length > 60 ? issue.src.substring(0, 60) + "..." : issue.src}</p>` : ""}
-        ${issue.href ? `<p class="issue-detail">Lien: ${issue.href.length > 60 ? issue.href.substring(0, 60) + "..." : issue.href}</p>` : ""}
+        ${issue.text ? `<p class="issue-detail">Texte: "${issue.text.length > 80 ? `${issue.text.substring(0, 80)}...` : issue.text}"</p>` : ""}
+        ${issue.src ? `<p class="issue-detail">Source: ${issue.src.length > 60 ? `${issue.src.substring(0, 60)}...` : issue.src}</p>` : ""}
+        ${issue.href ? `<p class="issue-detail">Lien: ${issue.href.length > 60 ? `${issue.href.substring(0, 60)}...` : issue.href}</p>` : ""}
         ${issue.type ? `<p class="issue-detail">Type: ${issue.type}</p>` : ""}
         ${issue.imageId ? `<button class="goto-btn" data-image-id="${issue.imageId}">Voir dans la page</button>` : ""}
         ${issue.linkId ? `<button class="goto-btn" data-link-id="${issue.linkId}">Voir dans la page</button>` : ""}
@@ -845,7 +749,7 @@ function attachSwitchHandlers() {
         e.stopPropagation(); // Empêcher la propagation au header
 
         const category = this.getAttribute("data-category");
-        const categoryElement = document.getElementById(category + "Category");
+        const categoryElement = document.getElementById(`${category}Category`);
         const isChecked = this.checked;
 
         console.log("===== Switch changed =====");
@@ -890,7 +794,9 @@ function attachSwitchHandlers() {
 
 // Fonction pour recalculer et afficher le score global
 function updateScore() {
-  if (!fullResults) return;
+  if (!fullResults) {
+    return;
+  }
 
   const filteredResults = filterResults(fullResults);
 
@@ -905,16 +811,16 @@ function updateScore() {
   const score =
     totalTests > 0 ? Math.round((1 - totalIssues / totalTests) * 100) : 100;
 
-  // Afficher le score
-  document.getElementById("totalScore").textContent = score + "%";
+  // Display score
+  document.getElementById("totalScore").textContent = `${score}%`;
   document.getElementById("totalPassed").textContent = totalTests - totalIssues;
   document.getElementById("totalFailed").textContent = totalIssues;
 
-  // Colorier le score
+  // Color the score
   const scoreElement = document.getElementById("totalScore");
-  if (score >= 80) {
+  if (score >= SCORES.GOOD_THRESHOLD) {
     scoreElement.style.color = "#10b981";
-  } else if (score >= 60) {
+  } else if (score >= SCORES.MEDIUM_THRESHOLD) {
     scoreElement.style.color = "#f59e0b";
   } else {
     scoreElement.style.color = "#ef4444";
@@ -932,7 +838,7 @@ async function updateVisualMarkers() {
     chrome.tabs.sendMessage(
       tab.id,
       { action: "updateFilters", filters: activeFilters },
-      function (response) {
+      function (_response) {
         if (chrome.runtime.lastError) {
           console.error("Erreur:", chrome.runtime.lastError);
           return;

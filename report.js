@@ -44,8 +44,8 @@ function renderReport(data) {
   const html = `
     <div class="header">
       <h1>
-        <img src="${chrome.runtime.getURL("icon48.png")}" alt="Logo Audit d'Accessibilité" style="width: 32px; height: 32px;">
-        Rapport d'Audit d'Accessibilité Web
+        <img src="${chrome.runtime.getURL("icon48.png")}" alt="Logo QuickA11y" style="width: 32px; height: 32px;">
+        QuickA11y - Rapport d'Audit d'Accessibilité Web
       </h1>
       <p>Analyse complète des critères WCAG</p>
     </div>
@@ -95,18 +95,22 @@ function renderReport(data) {
                 .map((issue) => {
                   // Construire la section des ressources utiles
                   const resources = [];
-                  if (issue.src)
+                  if (issue.src) {
                     resources.push(
                       `<strong>Source :</strong> <code>${issue.src}</code>`,
                     );
-                  if (issue.href)
+                  }
+                  if (issue.href) {
                     resources.push(
                       `<strong>URL du lien :</strong> <code>${issue.href}</code>`,
                     );
-                  if (issue.text)
+                  }
+                  if (issue.text) {
                     resources.push(`<strong>Texte :</strong> "${issue.text}"`);
-                  if (issue.type)
+                  }
+                  if (issue.type) {
                     resources.push(`<strong>Type :</strong> ${issue.type}`);
+                  }
 
                   const resourcesHtml =
                     resources.length > 0
@@ -137,7 +141,7 @@ function renderReport(data) {
     <div class="footer">
       <p>
         <img src="${chrome.runtime.getURL("icon48.png")}" alt="Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px;">
-        <strong>© Extension Audit d'Accessibilité Web</strong>
+        <strong>© QuickA11y - Accessibilité Web</strong>
       </p>
       <p>Généré le ${reportDate} à ${reportTime}</p>
     </div>

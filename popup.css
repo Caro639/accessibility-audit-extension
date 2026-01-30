@@ -172,7 +172,7 @@ h1 {
   gap: 8px;
 }
 
-/* Icônes des catégories */
+/* Category icons */
 .category-icon {
   color: #8b5cf6;
   flex-shrink: 0;
@@ -268,7 +268,7 @@ h1 {
   display: none;
 }
 
-/* S'assurer que les contrôles restent cliquables même quand désactivé */
+/* Ensure controls remain clickable even when disabled */
 .category.disabled .category-controls {
   pointer-events: auto;
   opacity: 1;
@@ -290,10 +290,14 @@ h1 {
   border-radius: 4px;
 }
 
-.issue.moyenne {
+.issue.medium {
   background: #f3e8ff;
   border-left-color: #8b5cf6;
 }
+/* .issue.moyenne {
+  background: #f3e8ff;
+  border-left-color: #8b5cf6;
+} */
 
 .issue.faible {
   background: #f3e8ff;
@@ -326,6 +330,10 @@ h1 {
   color: white;
 }
 
+/* .severity-medium {
+  background: #f59e0b;
+  color: white;
+} */
 .severity-moyenne {
   background: #f59e0b;
   color: white;
@@ -375,7 +383,7 @@ h1 {
   margin-top: 8px;
 }
 
-/* Lien pour afficher/masquer les ressources */
+/* Link to show/hide resources */
 .toggle-resources-link {
   color: #8b5cf6;
   font-size: 11px;
@@ -434,7 +442,7 @@ h1 {
   color: #1d4ed8;
 }
 
-/* Bouton "Voir dans la page" */
+/* "View in page" button */
 .goto-btn {
   margin-top: 8px;
   margin-right: 6px;
@@ -461,7 +469,7 @@ h1 {
   transform: translateY(0);
 }
 
-/* Bouton "Copier Markdown" */
+/* "Copy Markdown" button */
 .markdown-btn {
   margin-top: 8px;
   padding: 6px 12px;
@@ -559,7 +567,7 @@ h1 {
   background: #94a3b8;
 }
 
-/* Simulateur de daltonisme */
+/* Color blindness simulator */
 .colorblind-description {
   font-size: 13px;
   color: #64748b;

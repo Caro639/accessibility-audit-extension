@@ -16,7 +16,7 @@ global.chrome = {
       callback([{ id: 1, url: "https://example.com" }]);
     }),
     sendMessage: jest.fn((tabId, message, callback) => {
-      if (callback) callback({ success: true });
+      if (callback) {callback({ success: true });}
     }),
   },
   scripting: {

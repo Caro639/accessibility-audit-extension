@@ -1,6 +1,6 @@
-// Content script pour analyser l'accessibilité de la page
+﻿// Content script to analyze page accessibility
 
-// Stocker les éléments marqués pour pouvoir les modifier plus tard
+// Store marked elements for later modification
 const markedElements = {
   images: [],
   svgs: [],
@@ -10,9 +10,9 @@ const markedElements = {
   buttons: [],
 };
 
-// Fonction principale d'audit
+// Main audit function
 function auditAccessibility() {
-  // Réinitialiser les tableaux
+  // Reset arrays
   markedElements.images = [];
   markedElements.svgs = [];
   markedElements.links = [];
@@ -35,18 +35,18 @@ function auditAccessibility() {
   return results;
 }
 
-// Vérifier les images sans texte alternatif
+// Check images without alt text
 function checkImages() {
   const images = document.querySelectorAll("img");
   const issues = [];
 
   images.forEach((img, index) => {
     if (!img.alt || img.alt.trim() === "") {
-      // Ajouter un ID unique pour la navigation
+      // Add unique ID for navigation
       const imageId = `accessibility-img-${index}`;
       img.setAttribute("data-accessibility-id", imageId);
 
-      // Ajouter une bordure rouge plus visible avec animation
+      // Add red border with animation
       img.style.border = "5px solid #ef4444";
       img.style.outline = "5px solid #cc0808";
       img.style.outlineOffset = "3px";
@@ -54,7 +54,7 @@ function checkImages() {
       img.style.animation = "pulse-red 2s infinite";
       img.setAttribute("data-accessibility-issue", "missing-alt");
 
-      // Stocker l'élément pour pouvoir le modifier plus tard
+      // Store l'élément pour pouvoir le modifier plus tard
       markedElements.images.push(img);
 
       // Créer et ajouter un badge visuel
@@ -64,7 +64,7 @@ function checkImages() {
         badge.textContent = "⚠️ ALT MANQUANT";
         badge.setAttribute("data-badge-for", imageId);
 
-        // Positionner le badge
+        // Position badge
         const imgParent = img.parentElement;
         const originalPosition = window.getComputedStyle(imgParent).position;
         if (originalPosition === "static") {
@@ -75,7 +75,7 @@ function checkImages() {
         imgParent.appendChild(badge);
       }
 
-      // Ajouter l'animation CSS si elle n'existe pas déjà
+      // Add CSS animation si elle n'existe pas déjà
       if (!document.getElementById("accessibility-animation-styles")) {
         const style = document.createElement("style");
         style.id = "accessibility-animation-styles";
@@ -150,7 +150,7 @@ function checkImages() {
         imageId: imageId,
       });
     } else {
-      // Retirer le style si l'image a un alt valide
+      // Remove style if l'image a un alt valide
       if (img.getAttribute("data-accessibility-issue") === "missing-alt") {
         img.style.border = "";
         img.style.outline = "";
@@ -160,13 +160,13 @@ function checkImages() {
         img.removeAttribute("data-accessibility-issue");
         img.removeAttribute("data-accessibility-id");
 
-        // Retirer le badge
+        // Remove badge
         const badge = img.parentElement.querySelector(".accessibility-badge");
         if (badge) {
           badge.remove();
         }
 
-        // Restaurer la position du parent si elle a été changée
+        // Restore parent position si elle a été changée
         if (
           img.parentElement.getAttribute("data-position-changed") === "true"
         ) {
@@ -197,19 +197,19 @@ function checkSVG() {
     const hasTitle = svg.querySelector("title");
     const isHidden = svg.getAttribute("aria-hidden") === "true";
 
-    // Si le SVG n'a aucun attribut d'accessibilité et n'est pas caché
+    // If le SVG n'a aucun attribut d'accessibilité et n'est pas caché
     if (!hasRole && !hasAriaLabel && !hasTitle && !isHidden) {
-      // Ajouter un ID unique pour la navigation
+      // Add unique ID for navigation
       const svgId = `accessibility-svg-${index}`;
       svg.setAttribute("data-accessibility-id", svgId);
 
-      // Ajouter un style visuel (bordure violette)
+      // Add visual style (bordure violette)
       svg.style.outline = "5px solid #a855f7";
       svg.style.outlineOffset = "3px";
       svg.style.boxShadow = "0 0 20px rgba(168, 85, 247, 0.6)";
       svg.setAttribute("data-accessibility-issue", "svg-no-desc");
 
-      // Stocker l'élément
+      // Store l'élément
       markedElements.svgs.push(svg);
 
       // Créer et ajouter un badge visuel violet
@@ -223,7 +223,7 @@ function checkSVG() {
         badge.textContent = "⚠️ SVG NON ACCESSIBLE";
         badge.setAttribute("data-badge-for", svgId);
 
-        // Positionner le badge
+        // Position badge
         const svgParent = svg.parentElement;
         const originalPosition = window.getComputedStyle(svgParent).position;
         if (originalPosition === "static") {
@@ -243,7 +243,7 @@ function checkSVG() {
         svgId: svgId,
       });
     } else {
-      // Retirer le style si le SVG est valide
+      // Remove style if le SVG est valide
       if (svg.getAttribute("data-accessibility-issue") === "svg-no-desc") {
         svg.style.outline = "";
         svg.style.outlineOffset = "";
@@ -251,7 +251,7 @@ function checkSVG() {
         svg.removeAttribute("data-accessibility-issue");
         svg.removeAttribute("data-accessibility-id");
 
-        // Retirer le badge
+        // Remove badge
         const badge = svg.parentElement.querySelector(
           ".accessibility-badge-svg",
         );
@@ -259,7 +259,7 @@ function checkSVG() {
           badge.remove();
         }
 
-        // Restaurer la position du parent si elle a été changée
+        // Restore parent position si elle a été changée
         if (
           svg.parentElement.getAttribute("data-position-changed") === "true"
         ) {
@@ -283,158 +283,13 @@ function checkLinks() {
   const issues = [];
 
   links.forEach((link, index) => {
-    const ariaLabel = link.getAttribute("aria-label");
+    const linkIssue = analyzeLinkAccessibility(link, index);
 
-    // Vérifier si le lien contient une image avec alt
-    const hasImageWithAlt = link.querySelector('img[alt]:not([alt=""])');
-
-    // Vérifier si le lien contient un SVG accessible
-    const svgInLink = link.querySelector("svg");
-    let hasSVGAccessible = false;
-    if (svgInLink) {
-      const hasRole = svgInLink.getAttribute("role") === "img";
-      const hasSvgAriaLabel =
-        svgInLink.hasAttribute("aria-label") &&
-        svgInLink.getAttribute("aria-label").trim() !== "";
-      const hasTitle = svgInLink.querySelector("title");
-      hasSVGAccessible = hasRole || hasSvgAriaLabel || hasTitle;
-    }
-
-    // Obtenir le texte réel (sans le contenu des SVG, images et badges d'accessibilité)
-    const linkClone = link.cloneNode(true);
-    linkClone
-      .querySelectorAll(
-        "svg, img, .accessibility-badge, .accessibility-badge-link, .accessibility-badge-svg",
-      )
-      .forEach((el) => el.remove());
-    const text = linkClone.textContent.trim();
-
-    // Le lien est problématique si il n'a pas de description accessible
-    const hasAccessibleDescription =
-      text || ariaLabel || hasImageWithAlt || hasSVGAccessible;
-
-    if (!hasAccessibleDescription) {
-      // Ajouter un ID unique pour la navigation
-      const linkId = `accessibility-link-${index}`;
-      link.setAttribute("data-accessibility-id", linkId);
-
-      // Ajouter un style visuel (bordure orange)
-      link.style.outline = "3px solid #f97316";
-      link.style.outlineOffset = "2px";
-      link.setAttribute("data-accessibility-issue", "missing-text");
-
-      // Stocker l'élément
-      markedElements.links.push(link);
-
-      // Créer et ajouter un badge visuel orange
-      if (
-        !link.parentElement.querySelector(
-          `.accessibility-badge-link[data-badge-for="${linkId}"]`,
-        )
-      ) {
-        const badge = document.createElement("div");
-        badge.className = "accessibility-badge-link";
-        badge.textContent = "⚠️ LIEN VIDE";
-        badge.setAttribute("data-badge-for", linkId);
-
-        // Positionner le badge
-        const linkParent = link.parentElement;
-        const originalPosition = window.getComputedStyle(linkParent).position;
-        if (originalPosition === "static") {
-          linkParent.style.position = "relative";
-          linkParent.setAttribute("data-position-changed", "true");
-        }
-
-        linkParent.appendChild(badge);
-      }
-
-      issues.push({
-        element: `Lien ${index + 1}`,
-        issue: "Lien sans texte descriptif",
-        explanation:
-          "Sans texte, un utilisateur non-voyant ne sait pas où mène ce lien !",
-        severity: "élevée",
-        href: link.href,
-        linkId: linkId,
-      });
-    } else if (
-      text.toLowerCase() === "cliquez ici" ||
-      text.toLowerCase() === "en savoir plus" ||
-      text.toLowerCase() === "voir" ||
-      text.toLowerCase() === "lire la suite"
-    ) {
-      // Si le lien a un aria-label, c'est OK !
-      if (!ariaLabel) {
-        // Ajouter un ID unique pour la navigation
-        const linkId = `accessibility-link-${index}`;
-        link.setAttribute("data-accessibility-id", linkId);
-
-        // Style visuel pour texte non descriptif (bordure jaune)
-        link.style.outline = "3px solid #fbbf24";
-        link.style.outlineOffset = "2px";
-        link.setAttribute("data-accessibility-issue", "bad-text");
-
-        // Stocker l'élément
-        markedElements.links.push(link);
-
-        // Créer et ajouter un badge visuel jaune
-        if (
-          !link.parentElement.querySelector(
-            `.accessibility-badge-link[data-badge-for="${linkId}"]`,
-          )
-        ) {
-          const badge = document.createElement("div");
-          badge.className = "accessibility-badge-link";
-          badge.textContent = "⚠️ ARIA-LABEL ?";
-          badge.setAttribute("data-badge-for", linkId);
-          badge.style.background = "#f59e0b"; // Jaune/orange
-
-          // Positionner le badge
-          const linkParent = link.parentElement;
-          const originalPosition = window.getComputedStyle(linkParent).position;
-          if (originalPosition === "static") {
-            linkParent.style.position = "relative";
-            linkParent.setAttribute("data-position-changed", "true");
-          }
-
-          linkParent.appendChild(badge);
-        }
-
-        issues.push({
-          element: `Lien ${index + 1}`,
-          issue: "Texte de lien non descriptif",
-          explanation:
-            "Ajoutez un aria-label pour décrire la destination (ex: aria-label='En savoir plus sur [sujet]')",
-          severity: "moyenne",
-          text: text,
-          linkId: linkId,
-        });
-      }
+    if (linkIssue) {
+      addVisualFeedbackToLink(link, linkIssue, index);
+      issues.push(linkIssue);
     } else {
-      // Retirer les styles si le lien est valide
-      if (link.getAttribute("data-accessibility-issue")) {
-        link.style.outline = "";
-        link.style.outlineOffset = "";
-        link.removeAttribute("data-accessibility-issue");
-        link.removeAttribute("data-accessibility-id");
-
-        // Retirer le badge du lien
-        const linkId = link.getAttribute("data-accessibility-id");
-        const badge = link.parentElement.querySelector(
-          `.accessibility-badge-link[data-badge-for="${linkId}"]`,
-        );
-        if (badge) {
-          badge.remove();
-        }
-
-        // Restaurer la position du parent si elle a été changée
-        if (
-          link.parentElement.getAttribute("data-position-changed") === "true"
-        ) {
-          link.parentElement.style.position = "";
-          link.parentElement.removeAttribute("data-position-changed");
-        }
-      }
+      removeVisualFeedbackFromLink(link);
     }
   });
 
@@ -445,6 +300,182 @@ function checkLinks() {
   };
 }
 
+// Analyze l'accessibilité d'un lien
+function analyzeLinkAccessibility(link, index) {
+  const ariaLabel = link.getAttribute("aria-label");
+  const hasAccessibleDescription = checkLinkHasAccessibleDescription(link);
+  const text = extractLinkText(link);
+
+  // Case 1 : Lien sans description accessible
+  if (!hasAccessibleDescription) {
+    return createLinkIssue(
+      index,
+      "Lien sans texte descriptif",
+      "Sans texte, un utilisateur non-voyant ne sait pas où mène ce lien !",
+      "élevée",
+      { href: link.href },
+    );
+  }
+
+  // Case 2 : Texte non descriptif sans aria-label
+  if (isNonDescriptiveText(text) && !ariaLabel) {
+    return createLinkIssue(
+      index,
+      "Texte de lien non descriptif",
+      "Ajoutez un aria-label pour décrire la destination (ex: aria-label='En savoir plus sur [sujet]')",
+      "moyenne",
+      { text: text },
+    );
+  }
+
+  return null; // Lien valide
+}
+
+// Vérifier si un lien a une description accessible
+function checkLinkHasAccessibleDescription(link) {
+  const ariaLabel = link.getAttribute("aria-label");
+  const hasImageWithAlt = link.querySelector('img[alt]:not([alt=""])');
+  const hasSVGAccessible = checkLinkHasAccessibleSVG(link);
+  const text = extractLinkText(link);
+
+  return text || ariaLabel || hasImageWithAlt || hasSVGAccessible;
+}
+
+// Vérifier si le lien contient un SVG accessible
+function checkLinkHasAccessibleSVG(link) {
+  const svgInLink = link.querySelector("svg");
+
+  if (!svgInLink) {
+    return false;
+  }
+
+  const hasRole = svgInLink.getAttribute("role") === "img";
+  const hasSvgAriaLabel =
+    svgInLink.hasAttribute("aria-label") &&
+    svgInLink.getAttribute("aria-label").trim() !== "";
+  const hasTitle = svgInLink.querySelector("title");
+
+  return hasRole || hasSvgAriaLabel || hasTitle;
+}
+
+// Extract le texte d'un lien (sans SVG, images, badges)
+function extractLinkText(link) {
+  const linkClone = link.cloneNode(true);
+  linkClone
+    .querySelectorAll(
+      "svg, img, .accessibility-badge, .accessibility-badge-link, .accessibility-badge-svg",
+    )
+    .forEach((el) => el.remove());
+  return linkClone.textContent.trim();
+}
+
+// Vérifier si le texte est non descriptif
+function isNonDescriptiveText(text) {
+  const nonDescriptiveTexts = [
+    "cliquez ici",
+    "en savoir plus",
+    "voir",
+    "lire la suite",
+  ];
+  return nonDescriptiveTexts.includes(text.toLowerCase());
+}
+
+// Créer un objet d'issue pour un lien
+function createLinkIssue(index, issue, explanation, severity, details) {
+  const linkId = `accessibility-link-${index}`;
+  return {
+    element: `Lien ${index + 1}`,
+    issue: issue,
+    explanation: explanation,
+    severity: severity,
+    linkId: linkId,
+    ...details,
+  };
+}
+
+// Add visual feedback à un lien problématique
+function addVisualFeedbackToLink(link, linkIssue, index) {
+  const linkId = `accessibility-link-${index}`;
+  link.setAttribute("data-accessibility-id", linkId);
+
+  const isHighSeverity = linkIssue.severity === "élevée";
+  const outlineColor = isHighSeverity ? "#f97316" : "#fbbf24";
+  const badgeText = isHighSeverity ? "⚠️ LIEN VIDE" : "⚠️ ARIA-LABEL ?";
+  const badgeColor = isHighSeverity ? "#f97316" : "#f59e0b";
+  const issueType = isHighSeverity ? "missing-text" : "bad-text";
+
+  // Ajouter le style visuel
+  link.style.outline = `3px solid ${outlineColor}`;
+  link.style.outlineOffset = "2px";
+  link.setAttribute("data-accessibility-issue", issueType);
+
+  // Store l'élément
+  markedElements.links.push(link);
+
+  // Créer et ajouter le badge si nécessaire
+  addBadgeToLinkParent(link, linkId, badgeText, badgeColor);
+}
+
+// Add badge to link parent
+function addBadgeToLinkParent(link, linkId, badgeText, badgeColor) {
+  if (
+    link.parentElement.querySelector(
+      `.accessibility-badge-link[data-badge-for="${linkId}"]`,
+    )
+  ) {
+    return; // Badge déjà présent
+  }
+
+  const badge = document.createElement("div");
+  badge.className = "accessibility-badge-link";
+  badge.textContent = badgeText;
+  badge.setAttribute("data-badge-for", linkId);
+  badge.style.background = badgeColor;
+
+  // Position badge
+  ensureParentIsPositioned(link.parentElement);
+  link.parentElement.appendChild(badge);
+}
+
+// Ensure parent a position: relative
+function ensureParentIsPositioned(parent) {
+  const originalPosition = window.getComputedStyle(parent).position;
+  if (originalPosition === "static") {
+    parent.style.position = "relative";
+    parent.setAttribute("data-position-changed", "true");
+  }
+}
+
+// Remove visual feedback d'un lien
+function removeVisualFeedbackFromLink(link) {
+  if (!link.getAttribute("data-accessibility-issue")) {
+    return; // Pas de feedback à retirer
+  }
+
+  link.style.outline = "";
+  link.style.outlineOffset = "";
+  link.removeAttribute("data-accessibility-issue");
+
+  const linkId = link.getAttribute("data-accessibility-id");
+  link.removeAttribute("data-accessibility-id");
+
+  // Remove badge
+  if (linkId) {
+    const badge = link.parentElement.querySelector(
+      `.accessibility-badge-link[data-badge-for="${linkId}"]`,
+    );
+    if (badge) {
+      badge.remove();
+    }
+  }
+
+  // Restore parent position
+  if (link.parentElement.getAttribute("data-position-changed") === "true") {
+    link.parentElement.style.position = "";
+    link.parentElement.removeAttribute("data-position-changed");
+  }
+}
+
 // Vérifier la structure des titres
 function checkHeadings() {
   const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
@@ -452,7 +483,7 @@ function checkHeadings() {
   let previousLevel = 0;
   let issueIndex = 0;
 
-  // Injecter les styles CSS pour les badges de titres (une seule fois)
+  // Inject CSS styles for badges de titres (une seule fois)
   if (!document.getElementById("accessibility-heading-styles")) {
     const style = document.createElement("style");
     style.id = "accessibility-heading-styles";
@@ -503,16 +534,16 @@ function checkHeadings() {
     const level = parseInt(heading.tagName.charAt(1));
 
     if (previousLevel > 0 && level - previousLevel > 1) {
-      // Ajouter un ID unique pour la navigation
+      // Add unique ID for navigation
       const headingId = `accessibility-heading-${issueIndex}`;
       heading.setAttribute("data-accessibility-id", headingId);
 
-      // Ajouter un style visuel (bordure bleue)
+      // Add visual style (bordure bleue)
       heading.style.outline = "4px solid #3b82f6";
       heading.style.outlineOffset = "2px";
       heading.setAttribute("data-accessibility-issue", "heading-skip");
 
-      // Stocker l'élément
+      // Store l'élément
       markedElements.headings.push(heading);
 
       // Créer et ajouter un badge visuel bleu
@@ -526,7 +557,7 @@ function checkHeadings() {
         badge.textContent = `⚠️ SAUT H${previousLevel}→H${level}`;
         badge.setAttribute("data-badge-for", headingId);
 
-        // Positionner le badge
+        // Position badge
         const originalPosition = window.getComputedStyle(
           heading.parentElement,
         ).position;
@@ -552,16 +583,16 @@ function checkHeadings() {
     }
 
     if (!heading.textContent.trim()) {
-      // Ajouter un ID unique pour la navigation
+      // Add unique ID for navigation
       const headingId = `accessibility-heading-${issueIndex}`;
       heading.setAttribute("data-accessibility-id", headingId);
 
-      // Ajouter un style visuel (bordure bleue)
+      // Add visual style (bordure bleue)
       heading.style.outline = "4px solid #3b82f6";
       heading.style.outlineOffset = "2px";
       heading.setAttribute("data-accessibility-issue", "heading-empty");
 
-      // Stocker l'élément
+      // Store l'élément
       markedElements.headings.push(heading);
 
       // Créer et ajouter un badge visuel bleu
@@ -575,7 +606,7 @@ function checkHeadings() {
         badge.textContent = "⚠️ TITRE VIDE";
         badge.setAttribute("data-badge-for", headingId);
 
-        // Positionner le badge
+        // Position badge
         const originalPosition = window.getComputedStyle(
           heading.parentElement,
         ).position;
@@ -617,7 +648,7 @@ function checkForms() {
   const issues = [];
   let issueIndex = 0;
 
-  // Injecter les styles CSS pour les badges de formulaires (une seule fois)
+  // Inject CSS styles for badges de formulaires (une seule fois)
   if (!document.getElementById("accessibility-form-styles")) {
     const style = document.createElement("style");
     style.id = "accessibility-form-styles";
@@ -652,16 +683,16 @@ function checkForms() {
     const ariaLabelledby = input.getAttribute("aria-labelledby");
 
     if (!label && !ariaLabel && !ariaLabelledby) {
-      // Ajouter un ID unique pour la navigation
+      // Add unique ID for navigation
       const formId = `accessibility-form-${issueIndex}`;
       input.setAttribute("data-accessibility-id", formId);
 
-      // Ajouter un style visuel (bordure orange)
+      // Add visual style (bordure orange)
       input.style.outline = "3px solid #f59e0b";
       input.style.outlineOffset = "2px";
       input.setAttribute("data-accessibility-issue", "form-no-label");
 
-      // Stocker l'élément pour le filtrage
+      // Store l'élément pour le filtrage
       markedElements.forms.push(input);
 
       // Créer et ajouter un badge visuel orange
@@ -675,7 +706,7 @@ function checkForms() {
         badge.textContent = "⚠️ LABEL MANQUANT";
         badge.setAttribute("data-badge-for", formId);
 
-        // Positionner le badge
+        // Position badge
         const originalPosition = window.getComputedStyle(
           input.parentElement,
         ).position;
@@ -821,7 +852,7 @@ function checkButtons() {
   const issues = [];
   let issueIndex = 0;
 
-  // Injecter les styles CSS pour les badges de boutons (une seule fois)
+  // Inject CSS styles for badges de boutons (une seule fois)
   if (!document.getElementById("accessibility-button-styles")) {
     const style = document.createElement("style");
     style.id = "accessibility-button-styles";
@@ -852,16 +883,16 @@ function checkButtons() {
     const ariaLabel = button.getAttribute("aria-label");
 
     if (!text && !ariaLabel) {
-      // Ajouter un ID unique pour la navigation
+      // Add unique ID for navigation
       const buttonId = `accessibility-button-${issueIndex}`;
       button.setAttribute("data-accessibility-id", buttonId);
 
-      // Ajouter un style visuel (bordure verte)
+      // Add visual style (bordure verte)
       button.style.outline = "4px solid #10b981";
       button.style.outlineOffset = "2px";
       button.setAttribute("data-accessibility-issue", "button-no-text");
 
-      // Stocker l'élément pour le filtrage
+      // Store l'élément pour le filtrage
       markedElements.buttons.push(button);
 
       // Créer et ajouter un badge visuel vert
@@ -875,7 +906,7 @@ function checkButtons() {
         badge.textContent = "⚠️ TEXTE MANQUANT";
         badge.setAttribute("data-badge-for", buttonId);
 
-        // Positionner le badge
+        // Position badge
         const originalPosition = window.getComputedStyle(
           button.parentElement,
         ).position;
@@ -921,13 +952,13 @@ function clearVisualFeedback() {
     img.removeAttribute("data-accessibility-issue");
     img.removeAttribute("data-accessibility-id");
 
-    // Retirer le badge
+    // Remove badge
     const badge = img.parentElement.querySelector(".accessibility-badge");
     if (badge) {
       badge.remove();
     }
 
-    // Restaurer la position du parent si elle a été changée
+    // Restore parent position si elle a été changée
     if (img.parentElement.getAttribute("data-position-changed") === "true") {
       img.parentElement.style.position = "";
       img.parentElement.removeAttribute("data-position-changed");
@@ -944,13 +975,13 @@ function clearVisualFeedback() {
     link.removeAttribute("data-accessibility-issue");
     link.removeAttribute("data-accessibility-id");
 
-    // Retirer le badge du lien
+    // Remove badge du lien
     const badge = link.parentElement.querySelector(".accessibility-badge-link");
     if (badge) {
       badge.remove();
     }
 
-    // Restaurer la position du parent si elle a été changée
+    // Restore parent position si elle a été changée
     if (link.parentElement.getAttribute("data-position-changed") === "true") {
       link.parentElement.style.position = "";
       link.parentElement.removeAttribute("data-position-changed");
@@ -968,13 +999,13 @@ function clearVisualFeedback() {
     svg.removeAttribute("data-accessibility-issue");
     svg.removeAttribute("data-accessibility-id");
 
-    // Retirer le badge du SVG
+    // Remove badge du SVG
     const badge = svg.parentElement.querySelector(".accessibility-badge-svg");
     if (badge) {
       badge.remove();
     }
 
-    // Restaurer la position du parent si elle a été changée
+    // Restore parent position si elle a été changée
     if (svg.parentElement.getAttribute("data-position-changed") === "true") {
       svg.parentElement.style.position = "";
       svg.parentElement.removeAttribute("data-position-changed");
@@ -991,7 +1022,7 @@ function clearVisualFeedback() {
     heading.removeAttribute("data-accessibility-issue");
     heading.removeAttribute("data-accessibility-id");
 
-    // Retirer le badge du titre
+    // Remove badge du titre
     const badge = heading.parentElement.querySelector(
       ".accessibility-badge-heading",
     );
@@ -999,7 +1030,7 @@ function clearVisualFeedback() {
       badge.remove();
     }
 
-    // Restaurer la position du parent si elle a été changée
+    // Restore parent position si elle a été changée
     if (
       heading.parentElement.getAttribute("data-position-changed") === "true"
     ) {
@@ -1018,13 +1049,13 @@ function clearVisualFeedback() {
     form.removeAttribute("data-accessibility-issue");
     form.removeAttribute("data-accessibility-id");
 
-    // Retirer le badge du formulaire
+    // Remove badge du formulaire
     const badge = form.parentElement.querySelector(".accessibility-badge-form");
     if (badge) {
       badge.remove();
     }
 
-    // Restaurer la position du parent si elle a été changée
+    // Restore parent position si elle a été changée
     if (form.parentElement.getAttribute("data-position-changed") === "true") {
       form.parentElement.style.position = "";
       form.parentElement.removeAttribute("data-position-changed");
@@ -1041,7 +1072,7 @@ function clearVisualFeedback() {
     button.removeAttribute("data-accessibility-issue");
     button.removeAttribute("data-accessibility-id");
 
-    // Retirer le badge du bouton
+    // Remove badge du bouton
     const badge = button.parentElement.querySelector(
       ".accessibility-badge-button",
     );
@@ -1049,7 +1080,7 @@ function clearVisualFeedback() {
       badge.remove();
     }
 
-    // Restaurer la position du parent si elle a été changée
+    // Restore parent position si elle a été changée
     if (button.parentElement.getAttribute("data-position-changed") === "true") {
       button.parentElement.style.position = "";
       button.parentElement.removeAttribute("data-position-changed");
@@ -1257,7 +1288,9 @@ function updateVisualMarkersWithFilters(filters) {
       img.style.outlineOffset = "3px";
       img.style.boxShadow = "0 0 20px rgba(239, 68, 68, 0.6)";
       img.style.animation = "pulse-red 2s infinite";
-      if (badge) badge.style.display = "";
+      if (badge) {
+        badge.style.display = "";
+      }
     } else {
       // Masquer les marqueurs
       img.style.border = "none";
@@ -1265,13 +1298,17 @@ function updateVisualMarkersWithFilters(filters) {
       img.style.outlineOffset = "0";
       img.style.boxShadow = "none";
       img.style.animation = "none";
-      if (badge) badge.style.display = "none";
+      if (badge) {
+        badge.style.display = "none";
+      }
     }
   });
 
   // SVG - utiliser le tableau stocké
   markedElements.svgs.forEach((svg) => {
-    if (!svg.parentElement) return;
+    if (!svg.parentElement) {
+      return;
+    }
 
     const badge = svg.parentElement.querySelector(".accessibility-badge-svg");
 
@@ -1279,18 +1316,24 @@ function updateVisualMarkersWithFilters(filters) {
       svg.style.outline = "5px solid #a855f7";
       svg.style.outlineOffset = "3px";
       svg.style.boxShadow = "0 0 20px rgba(168, 85, 247, 0.6)";
-      if (badge) badge.style.display = "";
+      if (badge) {
+        badge.style.display = "";
+      }
     } else {
       svg.style.outline = "none";
       svg.style.outlineOffset = "0";
       svg.style.boxShadow = "none";
-      if (badge) badge.style.display = "none";
+      if (badge) {
+        badge.style.display = "none";
+      }
     }
   });
 
   // Liens - utiliser le tableau stocké
   markedElements.links.forEach((link) => {
-    if (!link.parentElement) return;
+    if (!link.parentElement) {
+      return;
+    }
 
     const badge = link.parentElement.querySelector(".accessibility-badge-link");
     const issue = link.getAttribute("data-accessibility-issue");
@@ -1303,17 +1346,23 @@ function updateVisualMarkersWithFilters(filters) {
         link.style.outline = "3px solid #fbbf24";
       }
       link.style.outlineOffset = "2px";
-      if (badge) badge.style.display = "";
+      if (badge) {
+        badge.style.display = "";
+      }
     } else {
       link.style.outline = "none";
       link.style.outlineOffset = "0";
-      if (badge) badge.style.display = "none";
+      if (badge) {
+        badge.style.display = "none";
+      }
     }
   });
 
   // Titres - utiliser le tableau stocké
   markedElements.headings.forEach((heading) => {
-    if (!heading.parentElement) return;
+    if (!heading.parentElement) {
+      return;
+    }
 
     const badge = heading.parentElement.querySelector(
       ".accessibility-badge-heading",
@@ -1322,34 +1371,46 @@ function updateVisualMarkersWithFilters(filters) {
     if (filters.headings) {
       heading.style.outline = "4px solid #3b82f6";
       heading.style.outlineOffset = "2px";
-      if (badge) badge.style.display = "";
+      if (badge) {
+        badge.style.display = "";
+      }
     } else {
       heading.style.outline = "none";
       heading.style.outlineOffset = "0";
-      if (badge) badge.style.display = "none";
+      if (badge) {
+        badge.style.display = "none";
+      }
     }
   });
 
   // Formulaires - utiliser le tableau stocké
   markedElements.forms.forEach((form) => {
-    if (!form.parentElement) return;
+    if (!form.parentElement) {
+      return;
+    }
 
     const badge = form.parentElement.querySelector(".accessibility-badge-form");
 
     if (filters.forms) {
       form.style.outline = "4px solid #f59e0b";
       form.style.outlineOffset = "2px";
-      if (badge) badge.style.display = "";
+      if (badge) {
+        badge.style.display = "";
+      }
     } else {
       form.style.outline = "none";
       form.style.outlineOffset = "0";
-      if (badge) badge.style.display = "none";
+      if (badge) {
+        badge.style.display = "none";
+      }
     }
   });
 
   // Boutons - utiliser le tableau stocké
   markedElements.buttons.forEach((button) => {
-    if (!button.parentElement) return;
+    if (!button.parentElement) {
+      return;
+    }
 
     const badge = button.parentElement.querySelector(
       ".accessibility-badge-button",
@@ -1358,11 +1419,15 @@ function updateVisualMarkersWithFilters(filters) {
     if (filters.buttons) {
       button.style.outline = "4px solid #10b981";
       button.style.outlineOffset = "2px";
-      if (badge) badge.style.display = "";
+      if (badge) {
+        badge.style.display = "";
+      }
     } else {
       button.style.outline = "none";
       button.style.outlineOffset = "0";
-      if (badge) badge.style.display = "none";
+      if (badge) {
+        badge.style.display = "none";
+      }
     }
   });
 }
