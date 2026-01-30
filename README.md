@@ -126,7 +126,7 @@ npm run test:coverage
 
 📖 **[Voir le guide complet des tests](./test.md)**
 
-### 3. Lancer un audit
+### 3. Lancer un audit (pour tous les utilisateurs)
 
 Cliquez sur l'icône de l'extension pour analyser automatiquement la page active.
 
@@ -134,19 +134,31 @@ Cliquez sur l'icône de l'extension pour analyser automatiquement la page active
 
 - **Score global** affiché en haut
 - **Problèmes classés** par catégorie et sévérité
+- **Messages pédagogiques** expliquant chaque critère
+- **Ressources** pour chaque critère non conforme
+- **Activer/Désactiver** chaque type de test individuellement
 - **Compteurs** de tests réussis/échoués
 
-### 5. Navigation vers les erreurs
+### 5. Corriger les problèmes rapidement
+
+- Cliquez sur **"Copier Markdown"** pour copier le rapport dans le presse-papiers en format Markdown.
+- Ou cliquez sur **"Exporter le rapport"** pour télécharger un fichier PDF détaillé.
+
+### 6. Navigation vers les erreurs
 
 Cliquez sur **"Voir dans la page"** pour scroller automatiquement vers l'élément problématique.
 
-### 6. Exporter le rapport
+### 7. Exporter le rapport
 
-Cliquez sur **"Exporter le rapport"** pour télécharger un fichier texte détaillé.
+Cliquez sur **"Exporter le rapport"** pour télécharger un fichier PDF détaillé.
 
-### 7. Effacer les marqueurs
+### 8. Effacer les marqueurs
 
-Cliquez sur **"Effacer les marqueurs"** pour retirer les bordures de couleur de la page.
+Cliquez sur **"Effacer les marqueurs"** pour retirer toutes les bordures de couleur des éléments problématiques sur la page.
+
+### 9. Mode Daltonisme
+
+Activez le filtre daltonisme pour tester la perception des couleurs sur la page.
 
 ## 🎓 Ce que ce projet démontre
 
