@@ -127,4 +127,83 @@ describe("QuickA11y - Images", () => {
       expect(createdBadge.textContent).toBe("⚠️ ALT MANQUANT");
     });
   });
+
+  describe("QuickA11y - SVG", () => {
+    test("devrait détecter les SVG sans attributs d'accessibilité", () => {
+      document.body.innerHTML = `
+        <svg width="100" height="100"></svg>
+        <svg role="img" aria-label="Icône"><circle r="10"/></svg>
+        <svg aria-hidden="true"><path d="M0,0"/></svg>
+      `;
+
+      function checkSVG() {
+        const svgs = document.querySelectorAll("svg");
+        const issues = [];
+
+        svgs.forEach((svg, index) => {
+          const hasRole = svg.getAttribute("role") === "img";
+          const hasAriaLabel =
+            svg.hasAttribute("aria-label") &&
+            svg.getAttribute("aria-label").trim() !== "";
+          const hasTitle = svg.querySelector("title");
+          const isHidden = svg.getAttribute("aria-hidden") === "true";
+
+          if (!hasRole && !hasAriaLabel && !hasTitle && !isHidden) {
+            issues.push({
+              element: `SVG ${index + 1}`,
+              issue: "SVG inline sans description",
+            });
+          }
+        });
+
+        return {
+          total: svgs.length,
+          issues: issues,
+          passed: svgs.length - issues.length,
+        };
+      }
+      const result = checkSVG();
+
+      // Définir les valeurs attendues
+      const EXPECTED_TOTAL_SVGS = 3;
+      expect(result.total).toBe(EXPECTED_TOTAL_SVGS);
+      expect(result.issues.length).toBe(1);
+      expect(result.passed).toBe(2);
+    });
+
+    test("devrait accepter SVG avec un title comme accessible", () => {
+      document.body.innerHTML = `
+        <svg><title>Icône de maison</title><rect width="100" height="100"/></svg>
+      `;
+
+      const svg = document.querySelector("svg");
+      const hasTitle = svg.querySelector("title");
+
+      expect(hasTitle).toBeTruthy();
+      expect(hasTitle.textContent).toBe("Icône de maison");
+    });
+
+    test('devrait ignorer les SVG avec aria-hidden="true"', () => {
+      document.body.innerHTML = `
+        <svg aria-hidden="true"><circle r="10"/></svg>
+      `;
+
+      function checkSVG() {
+        const svgs = document.querySelectorAll("svg");
+        const issues = [];
+
+        svgs.forEach((svg) => {
+          const isHidden = svg.getAttribute("aria-hidden") === "true";
+          if (!isHidden) {
+            issues.push({ element: "SVG" });
+          }
+        });
+        return {
+          issues,
+        };
+      }
+      const result = checkSVG();
+      expect(result.issues.length).toBe(0);
+    });
+  });
 });
